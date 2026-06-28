@@ -1,0 +1,11 @@
+{
+  "name": "employee-management-system",
+  "version": "1.0.0",
+  "description": "Full-Stack Employee Management System",
+  "scripts": {
+    "start": "concurrently \"cd backend && npm start\" \"cd frontend && npm run dev\""
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

@@ -53,13 +53,16 @@ const EmployeeSchema = new mongoose.Schema({
     required: true
   },
   // 'active'  → full system access
-  // 'pending' → awaiting admin approval (self-registered)
-  // 'rejected'→ admin rejected
   // 'deleted' → soft-deleted
   status: {
     type: String,
-    enum: ['active', 'pending', 'rejected', 'deleted'],
+    enum: ['active', 'deleted'],
     default: 'active'
+  },
+  approvalStatus: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'pending'
   }
 }, { timestamps: true });
 

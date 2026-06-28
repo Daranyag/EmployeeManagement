@@ -93,7 +93,8 @@ router.post('/signup', async (req, res) => {
       role: 'employee',
       company_id: companyDoc._id,
       isProfileCompleted: false,
-      status: 'pending',          // ← awaiting admin approval
+      status: 'active',           // ← active so they can login immediately
+      approvalStatus: 'pending',  // ← awaiting admin approval tracking
       registered_by: 'self'       // ← track it was self-registered
     });
     const savedUser = await newUser.save();
@@ -113,20 +114,32 @@ router.post('/signup', async (req, res) => {
       salary: 0,
       joining_date: new Date(),
       company_id: companyDoc._id,
-      status: 'pending'           // ← pending until admin approves
+      status: 'active',           // ← active so they have system access
+      approvalStatus: 'pending'   // ← pending until admin approves
     });
     await newEmployee.save();
 
-    // NO JWT TOKEN — employee must wait for approval before logging in
+    // AUTO LOGIN for Employee
+    const token = jwt.sign(
+      { userId: savedUser._id, role: savedUser.role, email: savedUser.email, companyId: savedUser.company_id },
+      JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
     return res.status(201).json({
-      message: 'Registration submitted successfully. Awaiting admin approval.',
-      pending: true,
+      message: 'Registration submitted successfully.',
+      token,
       user: {
+        id: savedUser._id,
         email: savedUser.email,
         role: savedUser.role,
+        company_id: savedUser.company_id,
         company_name: companyDoc.company_name,
-        status: savedUser.status
-      }
+        isProfileCompleted: savedUser.isProfileCompleted,
+        status: savedUser.status,
+        approvalStatus: savedUser.approvalStatus
+      },
+      employee: newEmployee
     });
   } catch (error) {
     console.error('Signup error:', error);
@@ -172,13 +185,6 @@ router.post('/login', async (req, res) => {
 
     // Removed pending block to allow pending users to login and see the pending screen
 
-    if (user.status === 'rejected') {
-      return res.status(403).json({
-        message: 'Your registration request has been declined by the administrator. Please contact your admin.',
-        status: 'rejected'
-      });
-    }
-
     if (user.status === 'deleted') {
       return res.status(403).json({ message: 'Account is inactive or deleted' });
     }
@@ -212,6 +218,7 @@ router.post('/login', async (req, res) => {
         company_name: companyDoc.company_name,
         isProfileCompleted: user.isProfileCompleted,
         status: user.status,
+        approvalStatus: user.approvalStatus,
         createdAt: user.createdAt
       },
       employee: employeeData
@@ -241,6 +248,7 @@ router.get('/profile', authenticate, async (req, res) => {
         company_name: user.company_id?.company_name || 'N/A',
         isProfileCompleted: user.isProfileCompleted,
         status: user.status,
+        approvalStatus: user.approvalStatus,
         createdAt: user.createdAt
       },
       employee: employeeData
@@ -270,6 +278,7 @@ router.get('/me', authenticate, async (req, res) => {
         company_name: user.company_id?.company_name || 'N/A',
         isProfileCompleted: user.isProfileCompleted,
         status: user.status,
+        approvalStatus: user.approvalStatus,
         createdAt: user.createdAt
       },
       employee: employeeData

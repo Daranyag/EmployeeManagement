@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [loading, setLoading] = useState(true);
 
-  const API_URL = 'http://localhost:5000/api';
+  const API_URL = 'https://employeemanagement-birj.onrender.com/api';
 
   useEffect(() => {
     const fetchMe = async () => {

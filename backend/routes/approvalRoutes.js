@@ -16,7 +16,7 @@ router.get('/', authenticate, authorize('admin'), async (req, res) => {
       company_id: req.user.company_id,
       role: 'employee',
       registered_by: 'self',
-      status: { $in: ['pending', 'rejected'] }
+      approvalStatus: { $in: ['pending', 'rejected'] }
     }).populate('company_id', 'company_name').select('-password').sort({ createdAt: -1 });
 
     // Enrich with employee record info (profile_photo, department, etc.)
@@ -27,6 +27,7 @@ router.get('/', authenticate, authorize('admin'), async (req, res) => {
           user_id: u._id,
           email: u.email,
           status: u.status,
+          approvalStatus: u.approvalStatus,
           registered_by: u.registered_by,
           createdAt: u.createdAt,
           company_name: u.company_id?.company_name || 'N/A',
@@ -47,37 +48,37 @@ router.get('/', authenticate, authorize('admin'), async (req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────
-// PUT /api/approvals/:userId/accept
-// Admin accepts a pending employee — activates their account
+// PUT /api/approvals/:userId/approve
+// Admin accepts a pending employee — sets approvalStatus to 'approved'
 // ─────────────────────────────────────────────────────────────
-router.put('/:userId/accept', authenticate, authorize('admin'), async (req, res) => {
+router.put('/:userId/approve', authenticate, authorize('admin'), async (req, res) => {
   try {
     const user = await User.findOne({
       _id: req.params.userId,
       company_id: req.user.company_id,
       role: 'employee',
-      status: 'pending'
+      approvalStatus: 'pending'
     });
 
     if (!user) {
       return res.status(404).json({ message: 'Pending request not found or already processed' });
     }
 
-    // Activate user account
-    user.status = 'active';
+    // Mark approvalStatus as approved
+    user.approvalStatus = 'approved';
     await user.save();
 
-    // Activate employee record
+    // Mark approvalStatus in employee record
     const emp = await Employee.findOne({ user_id: user._id });
     if (emp) {
-      emp.status = 'active';
+      emp.approvalStatus = 'approved';
       await emp.save();
     }
 
     res.json({
-      message: `Employee account for ${user.email} has been approved and activated.`,
+      message: `Employee account for ${user.email} has been approved.`,
       user_id: user._id,
-      status: 'active'
+      approvalStatus: 'approved'
     });
   } catch (error) {
     console.error('Accept approval error:', error);
@@ -87,7 +88,7 @@ router.put('/:userId/accept', authenticate, authorize('admin'), async (req, res)
 
 // ─────────────────────────────────────────────────────────────
 // PUT /api/approvals/:userId/reject
-// Admin rejects a pending employee — marks account as rejected
+// Admin rejects a pending employee — marks approvalStatus as rejected
 // ─────────────────────────────────────────────────────────────
 router.put('/:userId/reject', authenticate, authorize('admin'), async (req, res) => {
   try {
@@ -95,23 +96,28 @@ router.put('/:userId/reject', authenticate, authorize('admin'), async (req, res)
       _id: req.params.userId,
       company_id: req.user.company_id,
       role: 'employee',
-      status: 'pending'
+      approvalStatus: 'pending'
     });
 
     if (!user) {
       return res.status(404).json({ message: 'Pending request not found or already processed' });
     }
 
-    // Delete user account to allow email reuse
-    await User.deleteOne({ _id: user._id });
+    // Update user approvalStatus to rejected
+    user.approvalStatus = 'rejected';
+    await user.save();
 
-    // Delete associated employee record
-    await Employee.deleteOne({ user_id: user._id });
+    // Update employee approvalStatus
+    const emp = await Employee.findOne({ user_id: user._id });
+    if (emp) {
+      emp.approvalStatus = 'rejected';
+      await emp.save();
+    }
 
     res.json({
       message: `Employee registration for ${user.email} has been rejected.`,
       user_id: user._id,
-      status: 'rejected'
+      approvalStatus: 'rejected'
     });
   } catch (error) {
     console.error('Reject approval error:', error);

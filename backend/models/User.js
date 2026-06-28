@@ -27,13 +27,16 @@ const UserSchema = new mongoose.Schema({
     default: false
   },
   // 'active'  → can login
-  // 'pending' → self-registered, awaiting admin approval
-  // 'rejected'→ admin rejected the registration request
   // 'deleted' → soft-deleted, email stays locked forever
   status: {
     type: String,
-    enum: ['active', 'pending', 'rejected', 'deleted'],
+    enum: ['active', 'deleted'],
     default: 'active'
+  },
+  approvalStatus: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'pending'
   },
   // Track how the account was created
   registered_by: {

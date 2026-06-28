@@ -25,7 +25,11 @@ const approvalRoutes = require('./routes/approvalRoutes');
 const app = express();
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: 'https://employeemanagement-1-2rnx.onrender.com',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true
+}));
 app.use(express.json());
 
 // Routes

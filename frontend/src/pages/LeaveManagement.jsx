@@ -18,7 +18,7 @@ const LeaveManagement = () => {
   const fetchLeaves = async () => {
     try {
       const endpoint = user?.role === 'admin' ? '/leaves' : '/leaves/me';
-      const res = await fetch(`${API_URL}${endpoint}`, {
+      const res = await fetch(`${API_URL}/api${endpoint}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -35,7 +35,7 @@ const LeaveManagement = () => {
     setMessage('');
     setError('');
     try {
-      const res = await fetch(`${API_URL}/leaves`, {
+      const res = await fetch(`${API_URL}/api/leaves`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -61,7 +61,7 @@ const LeaveManagement = () => {
     setMessage('');
     setError('');
     try {
-      const res = await fetch(`${API_URL}/leaves/${leaveId}`, {
+      const res = await fetch(`${API_URL}/api/leaves/${leaveId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

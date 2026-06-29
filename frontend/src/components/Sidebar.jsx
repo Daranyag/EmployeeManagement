@@ -10,7 +10,7 @@ const Sidebar = ({ isOpen, closeMenu }) => {
     if (!token) return;
     const fetchUnread = async () => {
       try {
-        const res = await fetch(`${API_URL}/messages/unread-count`, {
+        const res = await fetch(`${API_URL}/api/messages/unread-count`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {

@@ -20,7 +20,7 @@ const ComplaintSystem = () => {
   const fetchComplaints = async () => {
     try {
       const endpoint = user?.role === 'admin' ? '/complaints' : '/complaints/me';
-      const res = await fetch(`${API_URL}${endpoint}`, {
+      const res = await fetch(`${API_URL}/api${endpoint}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -37,7 +37,7 @@ const ComplaintSystem = () => {
     setSuccess('');
     setError('');
     try {
-      const res = await fetch(`${API_URL}/complaints`, {
+      const res = await fetch(`${API_URL}/api/complaints`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ const ComplaintSystem = () => {
     setSuccess('');
     setError('');
     try {
-      const res = await fetch(`${API_URL}/complaints/${selectedComplaint.ticket_id}`, {
+      const res = await fetch(`${API_URL}/api/complaints/${selectedComplaint.ticket_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

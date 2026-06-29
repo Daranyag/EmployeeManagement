@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
         return;
       }
       try {
-        const res = await fetch(`${API_URL}/auth/profile`, {
+        const res = await fetch(`${API_URL}/api/auth/profile`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = async (email, password, company_name) => {
-    const res = await fetch(`${API_URL}/auth/login`, {
+    const res = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (name, email, password, role, company_name) => {
-    const res = await fetch(`${API_URL}/auth/signup`, {
+    const res = await fetch(`${API_URL}/api/auth/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -109,7 +109,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const updateProfile = async (profileData) => {
-    const res = await fetch(`${API_URL}/employees/profile/me`, {
+    const res = await fetch(`${API_URL}/api/employees/profile/me`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

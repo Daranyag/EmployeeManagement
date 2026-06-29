@@ -19,7 +19,7 @@ const Dashboard = () => {
 
   const fetchStats = useCallback(async () => {
     try {
-      const res = await fetch(`${API_URL}/dashboard/stats`, {
+      const res = await fetch(`${API_URL}/api/dashboard/stats`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -34,7 +34,7 @@ const Dashboard = () => {
   const fetchPendingApprovals = useCallback(async () => {
     setLoadingApprovals(true);
     try {
-      const res = await fetch(`${API_URL}/approvals`, {
+      const res = await fetch(`${API_URL}/api/approvals`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -63,7 +63,7 @@ const Dashboard = () => {
   const handleApprovalAction = async (userId, action) => {
     setApprovalMsg('');
     try {
-      const res = await fetch(`${API_URL}/approvals/${userId}/${action}`, {
+      const res = await fetch(`${API_URL}/api/approvals/${userId}/${action}`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -121,7 +121,7 @@ const Dashboard = () => {
 
     setPwLoading(true);
     try {
-      const res = await fetch(`${API_URL}/auth/change-password`, {
+      const res = await fetch(`${API_URL}/api/auth/change-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

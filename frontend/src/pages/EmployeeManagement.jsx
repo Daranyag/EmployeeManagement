@@ -39,7 +39,7 @@ const EmployeeManagement = () => {
 
   const fetchEmployees = async () => {
     try {
-      const res = await fetch(`${API_URL}/employees?search=${search}`, {
+      const res = await fetch(`${API_URL}/api/employees?search=${search}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -71,7 +71,7 @@ const EmployeeManagement = () => {
     setMessage('');
     setError('');
     try {
-      const res = await fetch(`${API_URL}/employees`, {
+      const res = await fetch(`${API_URL}/api/employees`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ const EmployeeManagement = () => {
     setMessage('');
     setError('');
     try {
-      const res = await fetch(`${API_URL}/employees/${editEmpId}`, {
+      const res = await fetch(`${API_URL}/api/employees/${editEmpId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -150,7 +150,7 @@ const EmployeeManagement = () => {
     setError('');
     setIsDeleting(true);
     try {
-      const res = await fetch(`${API_URL}/employees/${deleteModal.employee_id}`, {
+      const res = await fetch(`${API_URL}/api/employees/${deleteModal.employee_id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

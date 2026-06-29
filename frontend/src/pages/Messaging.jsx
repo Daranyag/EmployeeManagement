@@ -38,7 +38,7 @@ const Messaging = () => {
 
   const fetchContacts = async () => {
     try {
-      const res = await fetch(`${API_URL}/messages/contacts`, {
+      const res = await fetch(`${API_URL}/api/messages/contacts`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -52,7 +52,7 @@ const Messaging = () => {
 
   const fetchUnreadCounts = async () => {
     try {
-      const res = await fetch(`${API_URL}/messages/unread-counts-per-contact`, {
+      const res = await fetch(`${API_URL}/api/messages/unread-counts-per-contact`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -68,7 +68,7 @@ const Messaging = () => {
     if (!activeContact) return;
     try {
       // Mark messages from this contact as read
-      await fetch(`${API_URL}/messages/mark-read/${activeContact}`, {
+      await fetch(`${API_URL}/api/messages/mark-read/${activeContact}`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -76,7 +76,7 @@ const Messaging = () => {
       setUnreadCounts(prev => ({ ...prev, [activeContact]: 0 }));
 
       // Fetch the updated history
-      const res = await fetch(`${API_URL}/messages/history/${activeContact}`, {
+      const res = await fetch(`${API_URL}/api/messages/history/${activeContact}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -93,7 +93,7 @@ const Messaging = () => {
     if (!typedMessage.trim() || !activeContact) return;
 
     try {
-      const res = await fetch(`${API_URL}/messages`, {
+      const res = await fetch(`${API_URL}/api/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

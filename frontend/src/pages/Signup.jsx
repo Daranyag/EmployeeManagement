@@ -137,7 +137,11 @@ const Signup = () => {
         navigate('/');
       }
     } catch (err) {
-      setError(err.message || 'Registration failed');
+      if (err.message === 'Failed to fetch' || err.message === 'Load failed') {
+        setError('Unable to connect to the server.\nPlease try again later.');
+      } else {
+        setError(err.message || 'Registration failed');
+      }
     } finally {
       setLoading(false);
     }
@@ -297,7 +301,7 @@ const Signup = () => {
                 border: '1px solid rgba(239,68,68,0.3)',
                 color: '#dc2626',
                 padding: '12px 16px', borderRadius: '10px',
-                marginBottom: '18px', fontSize: '0.88rem', textAlign: 'center'
+                marginBottom: '18px', fontSize: '0.88rem', textAlign: 'center', whiteSpace: 'pre-wrap'
               }}>
                 {error}
               </div>

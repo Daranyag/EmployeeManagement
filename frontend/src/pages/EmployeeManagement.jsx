@@ -10,6 +10,7 @@ const EmployeeManagement = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(null); // holds employee to delete
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Form fields
   const [email, setEmail] = useState('');
@@ -147,6 +148,7 @@ const EmployeeManagement = () => {
     if (!deleteModal) return;
     setMessage('');
     setError('');
+    setIsDeleting(true);
     try {
       const res = await fetch(`${API_URL}/employees/${deleteModal.employee_id}`, {
         method: 'DELETE',
@@ -154,22 +156,25 @@ const EmployeeManagement = () => {
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.message || 'Failed to delete employee');
+        throw new Error(data.message || 'Unable to delete employee.');
       }
 
       // UI Rules:
       // Show success message
-      // Redirect automatically to Create Employee page (open create modal)
-      // No page refresh
-      // Clear form fields automatically
-      setMessage('Employee account permanently deleted. Email remains locked.');
-      clearForm();
+      // Hide message automatically
+      setMessage('Employee deleted successfully.');
+      setEmployees(prev => prev.filter(emp => emp.employee_id !== deleteModal.employee_id));
       setDeleteModal(null);
-      setShowCreateModal(true); // Auto-redirect to Create Employee
       fetchEmployees();
+
+      setTimeout(() => {
+        setMessage('');
+      }, 3000);
     } catch (err) {
-      setError(err.message);
+      setError('Unable to delete employee.\nPlease try again.');
       setDeleteModal(null);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -264,7 +269,12 @@ const EmployeeManagement = () => {
         <div className="modal-overlay">
           <div className="glass-panel modal-content">
             <h2 style={{ marginBottom: '20px' }}>Register Employee Account</h2>
-            <form onSubmit={handleCreate}>
+            {error && (
+              <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid var(--danger)', color: 'var(--danger)', padding: '12px', borderRadius: '8px', marginBottom: '20px' }}>
+                {error}
+              </div>
+            )}
+            <form onSubmit={handleCreate} autoComplete="off">
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginBottom: '20px' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Email Address</label>
@@ -273,6 +283,7 @@ const EmployeeManagement = () => {
                     className="custom-input"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="off"
                     required
                   />
                 </div>
@@ -286,6 +297,7 @@ const EmployeeManagement = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Enter Password"
+                      autoComplete="new-password"
                       required
                     />
                     <button
@@ -430,7 +442,12 @@ const EmployeeManagement = () => {
         <div className="modal-overlay">
           <div className="glass-panel modal-content">
             <h2 style={{ marginBottom: '20px' }}>Edit Employee: {editEmpId}</h2>
-            <form onSubmit={handleUpdate}>
+            {error && (
+              <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid var(--danger)', color: 'var(--danger)', padding: '12px', borderRadius: '8px', marginBottom: '20px' }}>
+                {error}
+              </div>
+            )}
+            <form onSubmit={handleUpdate} autoComplete="off">
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginBottom: '20px' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Full Name</label>
@@ -540,23 +557,29 @@ const EmployeeManagement = () => {
       {deleteModal && (
         <div className="modal-overlay">
           <div className="glass-panel" style={{ padding: '30px', maxWidth: '450px', width: '90%' }}>
-            <h3 style={{ fontSize: '1.3rem', marginBottom: '15px', color: 'var(--danger)' }}>Confirm Permanent Deletion</h3>
+            <h3 style={{ fontSize: '1.3rem', marginBottom: '15px', color: 'var(--danger)' }}>Delete Employee?</h3>
+            {error && (
+              <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid var(--danger)', color: 'var(--danger)', padding: '12px', borderRadius: '8px', marginBottom: '20px' }}>
+                {error}
+              </div>
+            )}
             <p style={{ color: 'var(--text-secondary)', marginBottom: '25px', lineHeight: 1.5 }}>
-              Are you sure you want to permanently delete the profile of <strong>{deleteModal.name}</strong> ({deleteModal.employee_id})? 
-              This action cannot be undone, and the email address <strong>{deleteModal.user_id?.email}</strong> will remain locked in the system.
+              Are you sure you want to permanently delete this employee?
             </p>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
               <button
                 onClick={() => setDeleteModal(null)}
                 style={{ background: 'transparent', border: '1px solid var(--border-color)', color: '#fff', padding: '10px 18px', borderRadius: '8px', cursor: 'pointer' }}
+                disabled={isDeleting}
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDelete}
-                style={{ background: 'var(--danger)', border: 'none', color: '#fff', padding: '10px 18px', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}
+                style={{ background: 'var(--danger)', border: 'none', color: '#fff', padding: '10px 18px', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', opacity: isDeleting ? 0.7 : 1 }}
+                disabled={isDeleting}
               >
-                Delete Account
+                {isDeleting ? 'Deleting...' : 'Delete'}
               </button>
             </div>
           </div>

@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [loading, setLoading] = useState(true);
 
-  const API_URL = 'https://employeemanagement-birj.onrender.com/api';
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchMe = async () => {
@@ -48,7 +48,14 @@ export const AuthProvider = ({ children }) => {
       body: JSON.stringify({ email, password, company_name })
     });
     
-    const data = await res.json();
+    let data;
+    try {
+      const text = await res.text();
+      data = text ? JSON.parse(text) : {};
+    } catch (e) {
+      throw new Error(`Server returned invalid response (Status: ${res.status})`);
+    }
+
     if (!res.ok) {
       throw new Error(data.message || 'Login failed');
     }
@@ -69,7 +76,14 @@ export const AuthProvider = ({ children }) => {
       body: JSON.stringify({ name, email, password, role, company_name })
     });
     
-    const data = await res.json();
+    let data;
+    try {
+      const text = await res.text();
+      data = text ? JSON.parse(text) : {};
+    } catch (e) {
+      throw new Error(`Server returned invalid response (Status: ${res.status})`);
+    }
+
     if (!res.ok) {
       throw new Error(data.message || 'Signup failed');
     }

@@ -9,7 +9,8 @@ const EmployeeSchema = new mongoose.Schema({
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: true,
+    index: true
   },
   name: {
     type: String,
@@ -50,7 +51,8 @@ const EmployeeSchema = new mongoose.Schema({
   company_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Company',
-    required: true
+    required: true,
+    index: true
   },
   // 'active'  → full system access
   // 'deleted' → soft-deleted

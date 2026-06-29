@@ -8,11 +8,13 @@ const MessageSchema = new mongoose.Schema({
   },
   sender_id: {
     type: String, // can be email or employee_id or 'admin'
-    required: true
+    required: true,
+    index: true
   },
   receiver_id: {
     type: String, // can be employee_id or 'admin'
-    required: true
+    required: true,
+    index: true
   },
   message: {
     type: String,
@@ -25,7 +27,8 @@ const MessageSchema = new mongoose.Schema({
   company_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Company',
-    required: true
+    required: true,
+    index: true
   },
   timestamp: {
     type: Date,

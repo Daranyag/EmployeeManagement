@@ -8,12 +8,14 @@ const ComplaintSchema = new mongoose.Schema({
   },
   employee_id: {
     type: String,
-    required: true // references employee_id
+    required: true, // references employee_id
+    index: true
   },
   company_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Company',
-    required: true
+    required: true,
+    index: true
   },
   subject: {
     type: String,

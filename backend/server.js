@@ -25,8 +25,15 @@ const approvalRoutes = require('./routes/approvalRoutes');
 const app = express();
 
 // Middlewares
+const allowedOrigins = ['http://localhost:5173', 'https://employeemanagement-1-2rnx.onrender.com'];
 app.use(cors({
-  origin: 'https://employeemanagement-1-2rnx.onrender.com',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true
 }));

@@ -121,7 +121,7 @@ const Dashboard = () => {
 
     setPwLoading(true);
     try {
-      const res = await fetch(`${API_URL}/change-password`, {
+      const res = await fetch(`${API_URL}/auth/change-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

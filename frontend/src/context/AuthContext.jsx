@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
         return;
       }
       try {
-        const res = await fetch(`${API_URL}/profile`, {
+        const res = await fetch(`${API_URL}/auth/profile`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = async (email, password, company_name) => {
-    const res = await fetch(`${API_URL}/login`, {
+    const res = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -53,11 +53,11 @@ export const AuthProvider = ({ children }) => {
       const text = await res.text();
       data = text ? JSON.parse(text) : {};
     } catch (e) {
-      throw new Error(`Server returned invalid response (Status: ${res.status})`);
+      throw new Error("Unable to reach the requested service.\nPlease contact the administrator.");
     }
 
     if (!res.ok) {
-      throw new Error(data.message || 'Login failed');
+      throw new Error(data.message || "Unable to reach the requested service.\nPlease contact the administrator.");
     }
 
     localStorage.setItem('token', data.token);
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (name, email, password, role, company_name) => {
-    const res = await fetch(`${API_URL}/signup`, {
+    const res = await fetch(`${API_URL}/auth/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -81,11 +81,11 @@ export const AuthProvider = ({ children }) => {
       const text = await res.text();
       data = text ? JSON.parse(text) : {};
     } catch (e) {
-      throw new Error(`Server returned invalid response (Status: ${res.status})`);
+      throw new Error("Unable to reach the requested service.\nPlease contact the administrator.");
     }
 
     if (!res.ok) {
-      throw new Error(data.message || 'Signup failed');
+      throw new Error(data.message || "Unable to reach the requested service.\nPlease contact the administrator.");
     }
 
     // If pending (employee self-signup), there is NO token — do not auto-login

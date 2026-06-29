@@ -40,8 +40,7 @@ app.use(cors({
 app.use(express.json());
 
 // Routes
-app.use('/api', authRoutes);
-app.use('/api/auth', authRoutes); // fallback mapping
+app.use('/api/auth', authRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/leaves', leaveRoutes);
 app.use('/api/complaints', complaintRoutes);
@@ -51,7 +50,7 @@ app.use('/api/approvals', approvalRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', time: new Date() });
+  res.json({ success: true, message: 'Backend running' });
 });
 
 const PORT = process.env.PORT || 5000;
